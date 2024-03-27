@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EnvConfiguration } from './config/app.config';
-import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -11,12 +11,11 @@ import { UsersModule } from './users/users.module';
       load: [ EnvConfiguration ],
     }),
 
-    MongooseModule.forRoot(process.env.MONGODB, {
-      dbName: 'pokemonsdb'
+    MongooseModule.forRoot( 'mongodb://localhost:27017/prueba-tecnica-nest', {
+      dbName: 'prueba-tecnica-nest'
     }),
 
-    UsersModule,
-
+    AuthModule,
 
   ],
   controllers: [],
