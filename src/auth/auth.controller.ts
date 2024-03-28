@@ -12,6 +12,7 @@ import { CreateProfesionalDto } from './dto/create-profesional.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UpdateProfesionalDto } from './dto/update-profesional.dto';
 import { RateProfesionalDto } from './dto/rate-profesional.dto';
+import { SolicitudProfesionalDto } from './dto/aprobar-profesional.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -49,20 +50,27 @@ export class AuthController {
     return this.authService.rateProfesional(id, rateProfesionalDto, userId);
   }
 
-  // @Post('solicitudProfesional')
-  // @Auth(ValidRoles.user, ValidRoles.soporte)
-  // solicitudProfesional(@Param('id') id: string, 
-  // @Body() rateProfesionalDto: RateProfesionalDto,
-  // @GetUser('_id') userId: string,
-  // ) {
-  //   return this.authService.solicitudProfesional(id, rateProfesionalDto, userId);
-  // }
-
   @Get('searchByTerm/:term')
-  @Auth(ValidRoles.user, ValidRoles.admin, ValidRoles.soporte)
+  @Auth(ValidRoles.user, ValidRoles.admin, ValidRoles.soporte, ValidRoles.profesional)
   findByTerm(@Param('term') term: string) {
     return this.authService.findByTerm(term);
   }
+  
+  @Post('solicitudProfesional/:id')
+  @Auth(ValidRoles.user)
+  solicitudProfesional(@Param('id') id: string, 
+  @GetUser('_id') userId: string,
+  ) {
+    return this.authService.solicitudProfesional(id, userId);
+  }
+  
+  @Patch('activateProfesional/:id')
+  @Auth(ValidRoles.soporte)
+  activateProfesional(@Param('id') id: string, 
+  ) {
+    return this.authService.activateProfesional(id);
+  }
+
 
   // verificar este endpoint --------------------------------------------
   @Get('private')

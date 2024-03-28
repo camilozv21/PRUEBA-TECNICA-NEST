@@ -13,9 +13,10 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateProfesionalDto } from './dto/create-profesional.dto';
 import { Profesional } from './entities/profesional.entity';
 import validator from 'validator';
-import { UpdateProfesionalDto } from './dto/update-profesional.dto';
 import { RateProfesional } from './entities/rateProfesional.entity';
 import { RateProfesionalDto } from './dto/rate-profesional.dto';
+import { SolicitudProfesional } from './entities/solicitudProfesional.entity';
+import { SolicitudProfesionalDto } from './dto/aprobar-profesional.dto';
 
 @Injectable()
 export class AuthService {
@@ -31,6 +32,9 @@ export class AuthService {
 
     @InjectModel(RateProfesional.name)
     private readonly rateProfesionalModel: Model<RateProfesional>,
+
+    @InjectModel(SolicitudProfesional.name)
+    private readonly solicitudProfesionalModel: Model<SolicitudProfesional>,
     
     private readonly confiService: ConfigService,
   ) {}
@@ -106,14 +110,20 @@ export class AuthService {
 
   async login(loginUserDto: LoginUserDto) {
     
+    let user: User | Profesional;
     const { email, password } = loginUserDto;
 
-    const user = await this.userModel
+    user = await this.userModel
       .findOne({ email })
       .select('email password _id');
 
-    if (!user) 
-      throw new UnauthorizedException('Invalid credentials (email)');
+    if (!user) {
+      user = await this.profesionalModel
+        .findOne({ email })
+        .select('email password _id');
+        if (!user)
+          throw new UnauthorizedException('Invalid credentials (email)');
+    }
 
     if (!bcrypt.compareSync( password, user.password )) 
       throw new UnauthorizedException('Invalid credentials (password)');
@@ -176,6 +186,28 @@ export class AuthService {
   
       return calificacion;
 
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
+  }
+
+  async solicitudProfesional(id: string, userId: string) {
+    try {
+      const solicitud = new this.solicitudProfesionalModel({ userId, profesionalId: id});
+      await solicitud.save();
+      return solicitud;
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
+  }
+
+  async activateProfesional(id: string) {
+    try {
+      const profesional = await this.profesionalModel.findByIdAndUpdate(id, { isActive: true }, { new: true });
+      if (!profesional) {
+        throw new Error('Profesional not found');
+      }
+      return profesional;
     } catch (error) {
       this.handleDBErrors(error);
     }

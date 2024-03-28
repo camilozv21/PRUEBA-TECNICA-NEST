@@ -23,7 +23,7 @@ export class Profesional extends Document {
   password: string;
 
   @Prop({
-    default: true
+    default: false
   })
   isActive: boolean;
 
