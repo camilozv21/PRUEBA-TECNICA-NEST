@@ -35,7 +35,7 @@ export class User extends Document {
 
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserSchema = SchemaFactory.createForClass(User).set('timestamps', true);
 
 UserSchema.pre('save', function(next) {
   this.email = this.email.toLowerCase().trim();

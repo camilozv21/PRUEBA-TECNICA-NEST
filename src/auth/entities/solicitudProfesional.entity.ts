@@ -24,5 +24,5 @@ export class SolicitudProfesional extends Document {
 
 }
 
-export const SolicitudProfesionalSchema = SchemaFactory.createForClass(SolicitudProfesional);
+export const SolicitudProfesionalSchema = SchemaFactory.createForClass(SolicitudProfesional).set('timestamps', true);
 

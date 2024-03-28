@@ -28,5 +28,5 @@ export class RateProfesional extends Document {
 
 }
 
-export const RateProfesionalSchema = SchemaFactory.createForClass(RateProfesional);
+export const RateProfesionalSchema = SchemaFactory.createForClass(RateProfesional).set('timestamps', true);
 

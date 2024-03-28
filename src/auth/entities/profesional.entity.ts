@@ -67,7 +67,7 @@ export class Profesional extends Document {
 
 }
 
-export const ProfesionalSchema = SchemaFactory.createForClass(Profesional);
+export const ProfesionalSchema = SchemaFactory.createForClass(Profesional).set('timestamps', true);
 
 ProfesionalSchema.pre('save', function(next) {
   this.email = this.email.toLowerCase().trim();
