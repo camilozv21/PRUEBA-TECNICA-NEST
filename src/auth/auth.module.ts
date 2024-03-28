@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { Profesional, ProfesionalSchema } from './entities/profesional.entity';
+import { RateProfesional, RateProfesionalSchema } from './entities/rateProfesional.entity';
 
 @Module({
   controllers: [AuthController],
@@ -26,6 +27,13 @@ import { Profesional, ProfesionalSchema } from './entities/profesional.entity';
       {
         name: Profesional.name,
         schema: ProfesionalSchema
+      },
+    ]),
+
+    MongooseModule.forFeature([
+      {
+        name: RateProfesional.name,
+        schema: RateProfesionalSchema
       },
     ]),
 

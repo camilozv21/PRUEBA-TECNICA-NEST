@@ -49,12 +49,30 @@ export class Profesional extends Document {
   })
   certificadoEstudios: string[];
 
+  @Prop({
+    required: true,
+  })
+  categoriasTrabajo: string;
+
+  @Prop({
+    required: true,
+  })
+  ubicacion: string;
+
+  @Prop({
+    required: false,
+    ref: 'RateProfesional',
+  })
+  rateId: string;
+
 }
 
 export const ProfesionalSchema = SchemaFactory.createForClass(Profesional);
 
 ProfesionalSchema.pre('save', function(next) {
   this.email = this.email.toLowerCase().trim();
+  this.ubicacion = this.ubicacion.toLowerCase().trim();
+  this.categoriasTrabajo = this.categoriasTrabajo.toLowerCase().trim();
   next();
 });
 

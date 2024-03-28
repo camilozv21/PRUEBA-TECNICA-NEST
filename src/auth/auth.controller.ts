@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Req, Headers, SetMetadata, UseInterceptors, UploadedFiles, UsePipes, ValidationPipe, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, UseInterceptors, UploadedFiles, Param, Patch } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -9,7 +9,9 @@ import { RoleProtected } from './decorators/role-protected.decorator';
 import { ValidRoles } from './interfaces/valid-roles';
 import { Auth } from './decorators/auth.decorator';
 import { CreateProfesionalDto } from './dto/create-profesional.dto';
-import { FileFieldsInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { UpdateProfesionalDto } from './dto/update-profesional.dto';
+import { RateProfesionalDto } from './dto/rate-profesional.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -26,14 +28,40 @@ export class AuthController {
     { name: 'foto', maxCount: 1 },
     { name: 'certificadoEstudios', maxCount: 10 },
   ]))
-  // @UsePipes(new ValidationPipe())
-  createProfesional(@Body() createProfesionalDto: CreateProfesionalDto, @UploadedFiles() files: {foto?: Express.Multer.File[], certificadoEstudios?: Express.Multer.File[]}) {
+  createProfesional(
+    @Body() createProfesionalDto: CreateProfesionalDto,
+    @UploadedFiles() files: {foto?: Express.Multer.File[], certificadoEstudios?: Express.Multer.File[]}
+    ) {
     return this.authService.createProfesional(createProfesionalDto, files);
   }
 
   @Post('login')
   loginUser(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
+  }
+
+  @Post('rate/:id')
+  @Auth(ValidRoles.user)
+  rateProfesional(@Param('id') id: string, 
+  @Body() rateProfesionalDto: RateProfesionalDto,
+  @GetUser('_id') userId: string,
+  ) {
+    return this.authService.rateProfesional(id, rateProfesionalDto, userId);
+  }
+
+  // @Post('solicitudProfesional')
+  // @Auth(ValidRoles.user, ValidRoles.soporte)
+  // solicitudProfesional(@Param('id') id: string, 
+  // @Body() rateProfesionalDto: RateProfesionalDto,
+  // @GetUser('_id') userId: string,
+  // ) {
+  //   return this.authService.solicitudProfesional(id, rateProfesionalDto, userId);
+  // }
+
+  @Get('searchByTerm/:term')
+  @Auth(ValidRoles.user, ValidRoles.admin, ValidRoles.soporte)
+  findByTerm(@Param('term') term: string) {
+    return this.authService.findByTerm(term);
   }
 
   // verificar este endpoint --------------------------------------------

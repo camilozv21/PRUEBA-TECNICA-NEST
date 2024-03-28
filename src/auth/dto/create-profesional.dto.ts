@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsOptional, IsString, Matches, MaxLength, Min, MinLength } from "class-validator";
+import { IsArray, IsEmail, IsNumber, IsOptional, IsString, Matches, MaxLength, Min, MinLength } from "class-validator";
 
 
 export class CreateProfesionalDto {
@@ -31,4 +31,15 @@ export class CreateProfesionalDto {
   @IsOptional()
   @IsArray()
   certificadoEstudios?: string[];
+
+  @IsString()
+  categoriasTrabajo: string;
+
+  @IsString()
+  ubicacion: string;
+
+  @IsString()
+  @IsOptional()
+  rateId: string;
+
 }
