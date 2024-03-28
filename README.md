@@ -30,7 +30,7 @@ Nota: __LAS VARIABLES DE ENTORNO SE VAN A SUBIR AL REPOSITORIO CON LA FINALIDAD 
 npm run start:dev
 ```
 
-8. Reconstruir la base de datos con la semilla
+8. Reconstruir la base de datos con la semilla __ESTE COMANDO ELIMINA LOS REGISTROS DE LA BASE DE DATOS__
 ```
 http://localhost:3000/api/seed
 ```
