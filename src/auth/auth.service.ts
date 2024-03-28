@@ -255,6 +255,27 @@ export class AuthService {
     }
   }
 
+  async findById(id: string) {
+    try {
+      
+      let user: User | Profesional;
+
+      user = await this.userModel.findById<User>(id);
+      if (!user) {
+        user = await this.profesionalModel.findById<Profesional>(id);
+      }
+
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      return user;
+      
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
+  }
+
   private getJwtToken(payload: JwtPayload): string {
 
     return this.jwtService.sign( payload );

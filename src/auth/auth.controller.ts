@@ -88,6 +88,12 @@ export class AuthController {
     return this.authService.updateProfesional(id, updateProfesionalDto);
   }
 
+  @Get('user/:id')
+  @Auth(ValidRoles.admin)
+  findById(@Param('id') id: string) {
+    return this.authService.findById(id);
+  }
+
 
   // verificar este endpoint --------------------------------------------
   @Get('private')
