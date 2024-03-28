@@ -17,6 +17,8 @@ import { RateProfesional } from './entities/rateProfesional.entity';
 import { RateProfesionalDto } from './dto/rate-profesional.dto';
 import { SolicitudProfesional } from './entities/solicitudProfesional.entity';
 import { SolicitudProfesionalDto } from './dto/aprobar-profesional.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateProfesionalDto } from './dto/update-profesional.dto';
 
 @Injectable()
 export class AuthService {
@@ -160,7 +162,7 @@ export class AuthService {
 
   async rateProfesional(id: string, rateProfesionalDto: RateProfesionalDto, userId: string) {
     try {
-      const profesional = await this.profesionalModel.findById(id);
+      const profesional = await this.profesionalModel.findById<Profesional>(id);
   
       if (!profesional) {
         throw new BadRequestException('Profesional not found');
@@ -203,11 +205,51 @@ export class AuthService {
 
   async activateProfesional(id: string) {
     try {
-      const profesional = await this.profesionalModel.findByIdAndUpdate(id, { isActive: true }, { new: true });
+      const profesional = await this.profesionalModel.findByIdAndUpdate<Profesional>(id, { isActive: true }, { new: true });
       if (!profesional) {
         throw new Error('Profesional not found');
       }
       return profesional;
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
+  }
+
+  async updateUser(id: string, updateUserDto: UpdateUserDto) {
+    try {
+
+      if (updateUserDto.password) {
+        updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+      }
+  
+      const user = await this.userModel.findByIdAndUpdate<User>(id, updateUserDto, { new: true });
+  
+      if (!user) {
+        throw new Error('User not found');
+      }
+  
+      return user;
+      
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
+  }
+
+  async updateProfesional(id: string, updateProfesionalDto: UpdateProfesionalDto) {
+    try {
+
+      if (updateProfesionalDto.password) {
+        updateProfesionalDto.password = await bcrypt.hash(updateProfesionalDto.password, 10);
+      }
+  
+      const profesional = await this.profesionalModel.findByIdAndUpdate<Profesional>(id, updateProfesionalDto, { new: true });
+  
+      if (!profesional) {
+        throw new Error('profesional not found');
+      }
+  
+      return profesional;
+      
     } catch (error) {
       this.handleDBErrors(error);
     }

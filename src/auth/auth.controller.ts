@@ -13,6 +13,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UpdateProfesionalDto } from './dto/update-profesional.dto';
 import { RateProfesionalDto } from './dto/rate-profesional.dto';
 import { SolicitudProfesionalDto } from './dto/aprobar-profesional.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -51,7 +52,7 @@ export class AuthController {
   }
 
   @Get('searchByTerm/:term')
-  @Auth(ValidRoles.user, ValidRoles.admin, ValidRoles.soporte, ValidRoles.profesional)
+  @Auth(ValidRoles.user, ValidRoles.admin, ValidRoles.soporte)
   findByTerm(@Param('term') term: string) {
     return this.authService.findByTerm(term);
   }
@@ -69,6 +70,22 @@ export class AuthController {
   activateProfesional(@Param('id') id: string, 
   ) {
     return this.authService.activateProfesional(id);
+  }
+
+  @Patch('updateUser/:id')
+  @Auth(ValidRoles.admin)
+  updateUser(@Param('id') id: string, 
+  @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.authService.updateUser(id, updateUserDto);
+  }
+
+  @Patch('updateProfesional/:id')
+  @Auth(ValidRoles.admin)
+  updateProfesional(@Param('id') id: string, 
+  @Body() updateProfesionalDto: UpdateProfesionalDto,
+  ) {
+    return this.authService.updateProfesional(id, updateProfesionalDto);
   }
 
 
