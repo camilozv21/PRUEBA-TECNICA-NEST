@@ -6,7 +6,7 @@
 
 Documentacion
 ```
-http://localhost:3000/api
+https://prueba-tecnica-nest-production.up.railway.app/api/api/
 ```
 
 1. Clonar el repositorio
