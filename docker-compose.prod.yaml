@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  pruebatecnica:
+    depends_on:
+      - db
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: prueba-tecnica
+    container_name: pruebatecnica
+    restart: always # reiniciar el contenedor si se detiene
+    ports:
+      - "${PORT}:${PORT}"
+
+    environment:
+      MONGODB: ${MONGODB}
+      PORT: ${PORT}
+    volumes:
+      - ./:/var/www/pruebatecnica
+
+  db:
+    image: mongo:5
+    container_name: mongo-pruebatecnica
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGODB_DATABASE: nest-pruebatecnica
+    volumes:
+      - ./mongo:/data/db
