@@ -1,7 +1,7 @@
 import { IsArray, IsEmail, IsOptional, IsString, Matches, MaxLength, Min, MinLength } from "class-validator";
 
 
-export class CreateUserDto {
+export class CreateProfesionalDto {
 
   @IsString()
   @MinLength(4)

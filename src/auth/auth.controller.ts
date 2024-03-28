@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Req, Headers, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req, Headers, SetMetadata, UseInterceptors, UploadedFiles, UsePipes, ValidationPipe, UploadedFile } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -8,6 +8,8 @@ import { UserRoleGuard } from './guards/user-role.guard';
 import { RoleProtected } from './decorators/role-protected.decorator';
 import { ValidRoles } from './interfaces/valid-roles';
 import { Auth } from './decorators/auth.decorator';
+import { CreateProfesionalDto } from './dto/create-profesional.dto';
+import { FileFieldsInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 export class AuthController {
@@ -16,6 +18,17 @@ export class AuthController {
   @Post('register')
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.authService.create(createUserDto);
+  }
+
+
+  @Post('registerProfesional')
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'foto', maxCount: 1 },
+    { name: 'certificadoEstudios', maxCount: 10 },
+  ]))
+  // @UsePipes(new ValidationPipe())
+  createProfesional(@Body() createProfesionalDto: CreateProfesionalDto, @UploadedFiles() files: {foto?: Express.Multer.File[], certificadoEstudios?: Express.Multer.File[]}) {
+    return this.authService.createProfesional(createProfesionalDto, files);
   }
 
   @Post('login')

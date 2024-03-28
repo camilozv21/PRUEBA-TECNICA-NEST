@@ -36,7 +36,7 @@ export class Profesional extends Document {
   @Prop({
     required: false,
   })
-  foto?: string;
+  foto: string;
 
   @Prop({
     required: true,
@@ -47,7 +47,7 @@ export class Profesional extends Document {
   @Prop({
     required: false,
   })
-  certificadoEstudios?: string[];
+  certificadoEstudios: string[];
 
 }
 

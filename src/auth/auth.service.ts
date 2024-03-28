@@ -10,6 +10,8 @@ import { User } from './entities/user.entity';
 import { LoginUserDto } from './dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
+import { CreateProfesionalDto } from './dto/create-profesional.dto';
+import { Profesional } from './entities/profesional.entity';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +22,9 @@ export class AuthService {
 
     private readonly jwtService: JwtService,
 
+    @InjectModel(Profesional.name)
+    private readonly profesionalModel: Model<Profesional>,
+    
     private readonly confiService: ConfigService,
   ) {}
 
@@ -42,6 +47,48 @@ export class AuthService {
       return {
         ...userObject,
         token: this.getJwtToken({id: user._id})
+      };
+      // retornar jwt de acceso
+
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
+  }
+
+  async createProfesional(createProfesionalDto: CreateProfesionalDto, files: {foto?: Express.Multer.File[], certificadoEstudios?: Express.Multer.File[]}) {
+    
+    try {
+
+      const { password, ...profesionalData } = createProfesionalDto;
+
+      let fotoName;
+      if (files.foto) {
+        fotoName = Date.now() + files.foto[0].originalname;
+      }
+  
+      let certificadoEstudiosNames = [];
+      if (files.certificadoEstudios) {
+        files.certificadoEstudios.forEach(file => {
+          certificadoEstudiosNames.push(Date.now() + file.originalname);
+        });
+      }
+      
+      const profesional = new this.profesionalModel( {
+        ...profesionalData,
+        password: bcrypt.hashSync( password, 10 ),
+        foto: fotoName,
+        certificadoEstudios: certificadoEstudiosNames,
+      } );
+
+      await profesional.save();
+
+      const profesionalObject = profesional.toObject();
+
+      delete profesionalObject.password;
+  
+      return {
+        ...profesionalObject,
+        token: this.getJwtToken({id: profesional._id})
       };
       // retornar jwt de acceso
 
@@ -76,6 +123,7 @@ export class AuthService {
   }
 
   private handleDBErrors(error: any): never {
+    console.log(error);
     if (error.code === 11000) throw new BadRequestException(error.detail);
 
     throw new InternalServerErrorException('Please check server logs');
