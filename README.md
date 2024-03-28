@@ -4,6 +4,11 @@
 
 # Ejecutar en desarrollo
 
+Documentacion
+```
+http://localhost:3000/api
+```
+
 1. Clonar el repositorio
 2. Ejecutar
 ```
